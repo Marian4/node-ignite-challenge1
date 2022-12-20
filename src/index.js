@@ -13,7 +13,7 @@ const users = [];
 function checksExistsUserAccount(request, response, next) {
   const user = users.find(user => user.username == request.headers.username);
   if(user){
-    request.body.user = user;
+    request.user = user;
     next();
   }
   response.status(404).json({error: 'User does not exist'});
@@ -35,12 +35,12 @@ app.post('/users', (request, response) => {
 });
 
 app.get('/todos', checksExistsUserAccount, (request, response) => {
-  const { user } = request.body;
+  const { user } = request;
   response.status(200).json(user.todos);
 });
 
 app.post('/todos', checksExistsUserAccount, (request, response) => {
-  const { user } = request.body;
+  const { user } = request;
   const todo = {
     id: uuidv4(),
     title: request.body.title,
@@ -54,7 +54,7 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
-  const { user } = request.body;
+  const { user } = request;
   const todo = user.todos.find(todo => todo.id === request.params.id);
   if (!todo) response.status(404).json({ error: 'todo does not exist'});
   todo.title = request.body.title;
@@ -64,7 +64,7 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
-  const { user } = request.body;
+  const { user } = request;
   const todo = user.todos.find(todo => todo.id === request.params.id);
   if (!todo) response.status(404).json({ error: 'todo does not exist'});
   todo.done = true;
@@ -73,7 +73,7 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
-  const { user } = request.body;
+  const { user } = request;
   const todoIndex = user.todos.findIndex(todo => todo.id === request.params.id)
   if (todoIndex === -1) response.status(404).json({ error: 'todo does not exist'})
   user.todos.splice(todoIndex, 1)
