@@ -74,9 +74,9 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
   const { user } = request;
-  const todoIndex = user.todos.findIndex(todo => todo.id === request.params.id)
-  if (todoIndex === -1) response.status(404).json({ error: 'todo does not exist'})
-  user.todos.splice(todoIndex, 1)
+  const todo = user.todos.find(todo => todo.id === request.params.id);
+  if (!todo) response.status(404).json({ error: 'todo does not exist'});
+  user.todos.splice(todo, 1)
 
   response.status(204).send()
 });
